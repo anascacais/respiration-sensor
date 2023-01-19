@@ -1,18 +1,20 @@
-int f = 10, dt = 0;
-unsigned long t = 0, lt = 0; 
-const int buttonPin = 3;  // the number of the pushbutton pin
+#include <IRremote.hpp>
 
-void setup() {
-  pinMode(buttonPin, INPUT);
-  Serial.begin(115200);
-  dt = int(1000*1/(float)f);
+int RECV_PIN = 11;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+void setup()
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // Start the receiver
 }
 
-void loop() {
-  t = millis();
-  if ((t-lt) >= dt) {
-    Serial.print(digitalRead(buttonPin));
-    Serial.print("\n");
-    lt = t;
-  }
+void loop()
+{
+  if (irrecv.decode(&results))
+    {
+     Serial.println(results.value, HEX);
+     irrecv.resume(); // Receive the next value
+    }
 }
